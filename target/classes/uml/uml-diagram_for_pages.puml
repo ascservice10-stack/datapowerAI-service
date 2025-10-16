@@ -1,0 +1,41 @@
+@startuml
+title Dynamic UI Backend Schema
+
+' ----------------- Classes -----------------
+class UiPage {
+    +id : int
+    +name : varchar(100)
+    +description : text
+}
+
+class UiComponent {
+    +id : int
+    +page_id : int
+    +type : varchar(50)
+    +label : varchar(100)
+    +key : varchar(100)
+    +required : boolean
+    +config : jsonb
+    +order_index : int
+}
+
+class UiSubmission {
+    +id : int
+    +page_id : int
+    +submitted_at : timestamp
+}
+
+class UiComponentValue {
+    +id : int
+    +submission_id : int
+    +component_id : int
+    +value : jsonb
+}
+
+' ----------------- Relationships -----------------
+UiPage "1" --> "0..*" UiComponent : has components
+UiPage "1" --> "0..*" UiSubmission : has submissions
+UiComponent "1" --> "0..*" UiComponentValue : referenced by
+UiSubmission "1" --> "0..*" UiComponentValue : has component values
+
+@enduml

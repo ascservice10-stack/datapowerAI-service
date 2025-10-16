@@ -1,0 +1,121 @@
+@startuml
+title Entity Relationship Diagram
+
+' ------------------------------------------------------------
+' ENTITY CLASSES
+' ------------------------------------------------------------
+
+class Agent {
+    +Long id
+    +String name
+    +String type
+    +String metadata
+}
+
+class AppLog {
+    +Long id
+    +String source
+    +String action
+    +String details
+    +LocalDateTime createdAt
+}
+
+class Project {
+    +Long id
+    +String name
+    +String description
+}
+
+class ProjectAssignment {
+    +Long id
+}
+
+class Report {
+    +Long id
+    +String name
+    +String type
+    +String payload
+    +LocalDateTime createdAt
+}
+
+class Role {
+    +Long id
+    +String name
+    +String description
+}
+
+class User {
+    +Long id
+    +String username
+    +String password
+    +String email
+}
+
+class Workflow {
+    +Long id
+    +String name
+    +String description
+}
+
+class UserState {
+    +Long id
+    +String stateName
+    +String description
+    +LocalDateTime lastUpdated
+}
+
+' ------------------------------------------------------------
+' RELATIONSHIPS
+' ------------------------------------------------------------
+
+' Workflow → Agent (One-to-Many)
+Workflow "1" --> "many" Agent : agents
+
+' Agent → Workflow (Many-to-One)
+Agent --> "1" Workflow : Workflow
+
+' AppLog → User (Many-to-One)
+AppLog --> "1" User : user
+
+' Project → User (Many-to-One owner)
+Project --> "1" User : owner
+
+' Project → Workflow (Many-to-One)
+Project --> "1" Workflow : Workflow
+
+' Project → ProjectAssignment (One-to-Many)
+Project "1" --> "many" ProjectAssignment : assignments
+
+' ProjectAssignment → Project (Many-to-One)
+ProjectAssignment --> "1" Project : project
+
+' ProjectAssignment → User (Many-to-One)
+ProjectAssignment --> "1" User : user
+
+' ProjectAssignment → Role (Many-to-One)
+ProjectAssignment --> "1" Role : role
+
+' Report → Project (Many-to-One)
+Report --> "1" Project : project
+
+' User ↔ Role (Many-to-Many)
+User "many" -- "many" Role : roles
+
+' Workflow → Project (One-to-Many)
+Workflow "1" --> "many" Project : projects
+
+' User → UserState (Many-to-One)
+User --> "1" UserState : currentState
+
+' ------------------------------------------------------------
+' STYLING
+' ------------------------------------------------------------
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam shadowing false
+skinparam class {
+    BackgroundColor #f9f9f9
+    BorderColor #888
+}
+skinparam packageStyle rectangle
+@enduml
