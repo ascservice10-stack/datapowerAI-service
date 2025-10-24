@@ -1,0 +1,92 @@
+@startuml
+title Database Design: User–Project–App with Role Mapping & Audit Fields
+
+entity "roles" as Role {
+  *id : int
+  --
+  name : varchar
+  description : text
+  created_at : timestamp
+  updated_at : timestamp
+  is_active : boolean
+}
+
+entity "users" as User {
+  *id : int
+  --
+  username : varchar
+  email : varchar
+  password : varchar
+  is_internal_user : boolean
+  role_id : int <<FK>> -- references roles(id)
+  created_at : timestamp
+  updated_at : timestamp
+  is_active : boolean
+}
+
+entity "projects" as Project {
+  *id : int
+  --
+  name : varchar
+  description : text
+  created_at : timestamp
+  updated_at : timestamp
+  is_active : boolean
+  created_by : int <<FK>> -- references users(id)
+}
+
+entity "apps" as App {
+  *id : int
+  --
+  name : varchar
+  description : text
+  created_at : timestamp
+  updated_at : timestamp
+  is_active : boolean
+}
+
+entity "project_app_mapping" as ProjectAppMap {
+  *id : int
+  --
+  project_id : int <<FK>> -- references projects(id)
+  app_id : int <<FK>> -- references apps(id)
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "project_assignments" as ProjectAssign {
+  *id : int
+  --
+  user_id : int <<FK>> -- references users(id)
+  project_id : int <<FK>> -- references projects(id)
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "db_connections" as DBConn {
+  *id : int
+  --
+  project_id : int <<FK>> -- references projects(id)
+  db_type : varchar
+  host : varchar
+  port : int
+  database_name : varchar
+  username : varchar
+  password : varchar
+  created_at : timestamp
+  updated_at : timestamp
+  is_active : boolean
+}
+
+' =======================
+' Relationships
+' =======================
+Role ||--o{ User : "has many users"
+User ||--o{ Project : "creates"
+User ||--o{ ProjectAssign : "assigned to"
+Project ||--o{ ProjectAssign : "has many users"
+Project ||--o{ ProjectAppMap : "linked with"
+App ||--o{ ProjectAppMap : "linked with"
+Project ||--o{ DBConn : "has DB connections"
+
+@enduml
